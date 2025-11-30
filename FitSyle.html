@@ -18,6 +18,7 @@
 </head>
 
 <body>
+    <!-- Alertas normales (login, etc) Arriba -->
     <div id="alert-container" class="position-fixed top-0 start-50 translate-middle-x p-3"
         style="z-index: 2050; width: 90%; max-width: 400px;"></div>
 
@@ -26,6 +27,9 @@
         style="z-index: 3000;">
         <i class="bi bi-wifi-off"></i> Modo Offline
     </div>
+
+    <!-- NUEVO: Contenedor para alerta moderna de stock (Abajo Centro) -->
+    <div id="toast-container" class="position-fixed bottom-0 start-50 translate-middle-x" style="z-index: 3050; margin-bottom: 80px; width: auto; max-width: 95%;"></div>
 
     <!-- Navbar -->
     <nav class="navbar navbar-main sticky-top">
@@ -41,7 +45,7 @@
             <div class="search-container mx-2">
                 <div class="search-input-wrapper">
                     <i class="bi bi-search search-icon"></i>
-                    <!-- CAMBIO: Placeholder ahora dice solo "Buscar" -->
+                    <!-- Placeholder "Buscar" -->
                     <input type="text" id="searchInput" class="search-input" placeholder="Buscar">
                     <i class="bi bi-x search-clear-icon d-none" id="clearSearchBtn"></i>
                 </div>
@@ -68,14 +72,13 @@
 
                     <!-- DROPDOWN USUARIO (VISIBLE CON SESIÓN) -->
                     <div class="dropdown d-none" id="userDropdown">
-                        <!-- CAMBIO: Nombre al natural (sin forzar mayúsculas) -->
-                        <a class="btn btn-icon text-white d-flex align-items-center dropdown-toggle" href="#"
+                        <!-- Nombre pegado al menu hamburguesa en móvil -->
+                        <a class="btn btn-icon text-white d-flex align-items-center dropdown-toggle pe-1" href="#"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false"
                             style="text-decoration: none;">
                             <i class="bi bi-person-circle fs-4"></i>
-                            <span id="navUserName" class="ms-2 fs-6 fw-bold d-inline-block" style="vertical-align: middle;">Usuario</span>
+                            <span id="navUserName" class="ms-1 fs-6 fw-bold d-inline-block" style="vertical-align: middle;">Usuario</span>
                         </a>
-                        <!-- Menú Desplegable: SOLO tiene el botón de cerrar sesión -->
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-user">
                             <li>
                                 <button class="dropdown-item text-danger d-flex align-items-center gap-2 justify-content-center"
@@ -87,8 +90,8 @@
                     </div>
                 </div>
 
-                <!-- HAMBURGUESA (Visible siempre) -->
-                <button class="navbar-toggler ms-2 d-block" type="button" id="menuToggleBtn">
+                <!-- HAMBURGUESA (Un poco más grande en CSS) -->
+                <button class="navbar-toggler ms-1 d-block" type="button" id="menuToggleBtn">
                     <i class="bi bi-list text-white"></i>
                 </button>
             </div>
@@ -312,6 +315,7 @@
         const navUserName = document.getElementById('navUserName');
         const logoutBtn = document.getElementById('logoutBtn');
         const alertContainer = document.getElementById('alert-container');
+        const toastContainer = document.getElementById('toast-container'); // Nuevo contenedor para toast
         const menuToggleBtn = document.getElementById('menuToggleBtn');
         const floatingMenu = document.getElementById('floatingMenu');
         
@@ -334,6 +338,34 @@
             `;
             alertContainer.appendChild(div);
             setTimeout(() => div.remove(), 6000);
+        };
+
+        // --- NUEVA FUNCIÓN TOAST (Stock insuficiente, abajo, moderno, SIN AMONTONARSE) ---
+        let toastTimeout; // Variable para controlar el tiempo del toast activo
+
+        window.showToast = (message) => {
+            const container = document.getElementById('toast-container');
+            
+            // 1. Limpiar cualquier toast existente inmediatamente
+            container.innerHTML = ''; 
+            if (toastTimeout) clearTimeout(toastTimeout);
+
+            // 2. Crear nuevo toast
+            const div = document.createElement('div');
+            div.className = 'custom-toast show'; // Se muestra directamente
+            div.innerHTML = `<i class="bi bi-exclamation-circle-fill"></i> <span>${message}</span>`;
+            
+            container.appendChild(div);
+
+            // 3. Programar eliminación
+            toastTimeout = setTimeout(() => {
+                div.classList.remove('show');
+                div.classList.add('hide');
+                setTimeout(() => {
+                    // Verificación extra para no borrar uno nuevo que haya entrado
+                    if (container.contains(div)) div.remove();
+                }, 300);
+            }, 2500); // Duración un poco más corta para que se sienta ágil
         };
 
         // --- AUTH: TOGGLE LOGIN / REGISTER ---
@@ -372,15 +404,11 @@
                 } catch (error) {
                     console.error("Google Auth Error:", error);
                     let msg = "Error al iniciar sesión con Google.";
-                    
                     if (error.code === 'auth/unauthorized-domain') {
                         msg = "⚠️ <b>Error de Dominio:</b> Este sitio no está autorizado. Agrega este dominio a 'Authorized Domains' en tu consola de Firebase.";
                     } else if (error.code === 'auth/popup-closed-by-user') {
                         msg = "Cancelaste el inicio de sesión.";
-                    } else if (error.code === 'auth/cancelled-popup-request') {
-                        msg = "Solicitud cancelada. Intenta de nuevo.";
                     }
-
                     window.showAlert(msg, "danger");
                 } finally {
                     googleLoginBtn.disabled = false;
@@ -399,19 +427,16 @@
 
                 try {
                     if (isRegisterMode) {
-                        // REGISTRO
                         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                         if (name) {
                             await updateProfile(userCredential.user, { displayName: name });
                         }
                         window.showAlert("Cuenta creada exitosamente", "success");
                     } else {
-                        // LOGIN
                         await signInWithEmailAndPassword(auth, email, password);
                         window.showAlert("Bienvenido de nuevo", "success");
                     }
                     
-                    // Cerrar modal
                     const modalEl = document.getElementById('loginModal');
                     const modal = bootstrap.Modal.getInstance(modalEl);
                     if(modal) modal.hide();
@@ -448,7 +473,6 @@
             if (user) {
                 loginBtn.classList.add('d-none');
                 userDropdown.classList.remove('d-none');
-                // CAMBIO: Mostrar nombre tal cual, sin recortar
                 const name = user.displayName || 'Usuario';
                 navUserName.textContent = name;
             } else {
@@ -685,17 +709,24 @@
             const prod = allProducts.find(p => p.id === id);
             const qtyInput = document.getElementById(`qty-${id}`);
             const qty = parseInt(qtyInput.value) || 1;
-            if (qty > prod.stock) { window.showAlert(`Solo quedan ${prod.stock}`, "danger"); return; }
+            if (qty > prod.stock) { 
+                // AQUI CAMBIE LA ALERTA A LA NUEVA TOAST (Abajo)
+                window.showToast(`Stock insuficiente. Solo quedan ${prod.stock}`); 
+                return; 
+            }
             const exist = carrito.find(i => i.id === id);
             if (exist) {
-                if (exist.cantidad + qty > prod.stock) { window.showAlert("Stock insuficiente", "danger"); return; }
+                if (exist.cantidad + qty > prod.stock) { 
+                    window.showToast("Stock insuficiente"); 
+                    return; 
+                }
                 exist.cantidad += qty;
             } else {
                 carrito.push({ ...prod, cantidad: qty });
             }
             saveCart();
             qtyInput.value = 1;
-            window.showAlert("Producto agregado", "success");
+            // AQUI QUITE LA ALERTA DE PRODUCTO AGREGADO (No hace nada visualmente, solo agrega)
         };
 
         window.removeFromCart = (idx) => {
@@ -760,7 +791,6 @@
         document.getElementById('limpiar-carrito').onclick = () => { if (confirm("¿Vaciar carrito?")) { carrito = []; saveCart(); } };
 
         // --- PAYPAL DYNAMIC INITIALIZATION (DEFENSIVE LOADING) ---
-        // Se carga dinámicamente para manejar errores de entorno (sandbox/iframe) y evitar "window host error"
         const loadPayPal = () => {
             const script = document.createElement('script');
             // Usando tu Client ID original
@@ -829,13 +859,10 @@
 
                 // Wrap render in try-catch to suppress sandbox errors
                 try {
-                    // Check if buttons are already rendered to avoid duplicates
-                    if(document.getElementById('paypal-button-container').innerHTML.trim() === "") {
-                         buttons.render('#paypal-button-container').catch(err => {
-                            console.warn("PayPal render warning:", err);
-                            fallbackPayPalUI();
-                        });
-                    }
+                    buttons.render('#paypal-button-container').catch(err => {
+                        console.warn("PayPal render warning:", err);
+                        fallbackPayPalUI();
+                    });
                 } catch (renderErr) {
                     console.warn("PayPal render error:", renderErr);
                     fallbackPayPalUI();
