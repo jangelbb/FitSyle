@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tienda Online</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#ffffff">
+    
+    <!-- Bootstrap e Iconos -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <style>
+        :root {
+            --brand-green: #014421;
+            --brand-green-hover: #025e2e;
+            --text-main: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #ffffff;
+            color: var(--text-main);
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            
+            /* Centrado total en pantalla completa */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;     
+        }
+
+        /* --- LOGO --- */
+        .logo-img {
+            width: 150px;       
+            height: 150px;      
+            object-fit: cover;  
+            border-radius: 50%;
+            margin-bottom: 2rem;
+            /* Sombra ultra suave */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+        }
+
+        h1 {
+            font-weight: 800;
+            color: var(--brand-green);
+            margin-bottom: 0.5rem;
+            font-size: 2.2rem;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            color: #888; 
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            font-weight: 400;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 16px; 
+            width: 100%;
+            max-width: 320px;
+        }
+
+        /* --- BOTONES --- */
+        .btn-custom {
+            padding: 16px 20px;
+            font-size: 1.1rem;
+            width: 100%;
+            text-decoration: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Botón 1: Tienda */
+        .btn-primary-custom {
+            background-color: var(--brand-green);
+            color: white !important;
+            border: none;
+            box-shadow: 0 4px 15px rgba(1, 68, 33, 0.25);
+        }
+
+        .btn-primary-custom:hover {
+            background-color: var(--brand-green-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(1, 68, 33, 0.35);
+        }
+
+        /* Botón 2: Admin */
+        .btn-outline-custom {
+            background-color: transparent;
+            color: var(--brand-green) !important;
+            border: 2px solid var(--brand-green);
+        }
+
+        .btn-outline-custom:hover {
+            background-color: rgba(1, 68, 33, 0.05);
+            transform: translateY(-2px);
+        }
+
+        /* --- ELEMENTOS FLOTANTES --- */
+        .install-btn-float {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 1000;
+            
+            background-color: var(--brand-green);
+            color: white; 
+            border: none;
+            border-radius: 50px; 
+            padding: 12px 24px;
+            
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            
+            display: none;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .install-btn-float:hover {
+            transform: scale(1.05);
+        }
+
+        .status-notification {
+            position: fixed; 
+            bottom: 30px;    
+            right: 30px;     
+            z-index: 1050;   
+            
+            background: #dc3545;
+            color: white;
+            
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-radius: 50px; 
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .status-online {
+            background: var(--brand-green);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- SOLO TU IMAGEN -->
+    <img src="Img/logos.png" alt="FitStyle Logo" class="logo-img">
+    
+    <h1>FitSyle</h1>
+    <p>Selecciona tu modo de acceso:</p>
+    
+    <div class="menu">
+        <a href="admin.html" class="btn-custom btn-outline-custom">
+            <i class="bi bi-person-fill-gear me-2"></i> Modo Admin
+        </a>
+        
+        <a href="FitSyle.html" class="btn-custom btn-primary-custom">
+            <i class="bi bi-shop me-2"></i> Ir a la Tienda
+        </a>
+    </div>
+
+    <!-- Funciones App -->
+    <button id="btnInstall" class="install-btn-float">
+        <i class="bi bi-download"></i> Instalar App
+    </button>
+
+    <div id="status" class="status-notification" style="display: none;">
+        <i id="statusIcon" class="bi me-2 fs-5"></i> <span id="statusText"></span>
+    </div>
+
+    <script>
+        // Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('SW OK'))
+                .catch(error => console.log('Error SW:', error));
+        }
+
+        // Instalación
+        let deferredPrompt;
+        const btnInstall = document.getElementById('btnInstall');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            btnInstall.style.display = 'flex'; 
+        });
+
+        btnInstall.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    btnInstall.style.display = 'none';
+                }
+                deferredPrompt = null;
+            }
+        });
+
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            btnInstall.style.display = 'none';
+        }
+
+        // Estado Conexión
+        function updateConnectionStatus() {
+            const statusDiv = document.getElementById('status');
+            const statusText = document.getElementById('statusText');
+            const statusIcon = document.getElementById('statusIcon');
+            
+            if (navigator.onLine) {
+                statusDiv.className = 'status-notification status-online';
+                statusIcon.className = 'bi bi-wifi me-2 fs-5';
+                statusText.textContent = 'En línea';
+                
+                statusDiv.style.display = 'flex';
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+            } else {
+                statusDiv.className = 'status-notification';
+                statusIcon.className = 'bi bi-wifi-off me-2 fs-5';
+                statusText.textContent = 'Sin conexión';
+                statusDiv.style.display = 'flex';
+            }
+        }
+
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+
+        if (!navigator.onLine) {
+            updateConnectionStatus();
+        }
+    </script>
+</body>
+</html>
