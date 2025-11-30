@@ -59,24 +59,25 @@
 
                 <!-- USUARIO / LOGIN -->
                 <div class="d-flex align-items-center">
+                    <!-- BOTÓN LOGIN (VISIBLE CUANDO NO HAY SESIÓN) -->
                     <a class="btn btn-icon fs-4 text-white d-flex align-items-center" href="#" id="loginBtn"
                         data-bs-toggle="modal" data-bs-target="#loginModal">
                         <i class="bi bi-person-circle"></i>
                     </a>
 
+                    <!-- DROPDOWN USUARIO (VISIBLE CON SESIÓN) -->
                     <div class="dropdown d-none" id="userDropdown">
-                        <a class="btn btn-icon fs-4 text-white d-flex align-items-center dropdown-toggle" href="#"
+                        <!-- Botón Toggle: Ahora incluye el nombre y NO tiene flecha (ver CSS) -->
+                        <a class="btn btn-icon text-white d-flex align-items-center dropdown-toggle" href="#"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false"
                             style="text-decoration: none;">
-                            <i class="bi bi-person-circle"></i>
+                            <i class="bi bi-person-circle fs-4"></i>
+                            <span id="navUserName" class="ms-2 fs-6 fw-bold text-uppercase d-inline-block" style="vertical-align: middle;">Usuario</span>
                         </a>
+                        <!-- Menú Desplegable: SOLO tiene el botón de cerrar sesión -->
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-user">
-                            <li><span class="dropdown-item-text fw-bold" id="navUserName">Usuario</span></li>
                             <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <button class="dropdown-item text-danger d-flex align-items-center gap-2"
+                                <button class="dropdown-item text-danger d-flex align-items-center gap-2 justify-content-center"
                                     id="logoutBtn">
                                     <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
                                 </button>
@@ -444,11 +445,13 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
+                // Usuario logueado
                 loginBtn.classList.add('d-none');
                 userDropdown.classList.remove('d-none');
                 const name = user.displayName ? user.displayName.split(' ')[0] : 'Usuario';
                 navUserName.textContent = name;
             } else {
+                // Usuario no logueado
                 loginBtn.classList.remove('d-none');
                 userDropdown.classList.add('d-none');
                 navUserName.textContent = "";
