@@ -9,14 +9,12 @@
     <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#014421">
 
+    <!-- Bootstrap CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css"
-        rel="stylesheet">
-    <!-- TU HOJA DE ESTILOS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <!-- Link al archivo CSS externo -->
     <link rel="stylesheet" href="style.css">
-    <!-- PAYPAL SDK (LIVE MODE) -->
-    <script
-        src="https://www.paypal.com/sdk/js?client-id=ARhOIBjuNzQQeGRv84_3n7kiuTWPY90fGLRUGAHlcTAmEJsoXnTiHgIgaM1-ZFIRhpni_SMlTIG0hyuo&currency=MXN"></script>
 </head>
 
 <body>
@@ -35,7 +33,7 @@
 
             <!-- LOGO -->
             <a class="navbar-brand d-flex align-items-center me-auto" href="index.html">
-                <img src="Img/logo.png" alt="FitSyle" onerror="this.src='lojo.png'">
+                <img src="Img/logo.png" alt="FitSyle" onerror="this.src='https://via.placeholder.com/35?text=F'">
                 <span class="navbar-brand-text ms-2 d-none d-sm-inline">FitSyle</span>
             </a>
 
@@ -67,11 +65,10 @@
                     </a>
 
                     <div class="dropdown d-none" id="userDropdown">
-                        <a class="btn btn-icon fs-4 text-white d-flex align-items-center gap-2 dropdown-toggle" href="#"
+                        <a class="btn btn-icon fs-4 text-white d-flex align-items-center dropdown-toggle" href="#"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false"
                             style="text-decoration: none;">
                             <i class="bi bi-person-circle"></i>
-                            <span id="navbarUserLabel" class="fs-6 d-none d-sm-inline"></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-user">
                             <li><span class="dropdown-item-text fw-bold" id="navUserName">Usuario</span></li>
@@ -106,9 +103,9 @@
                 <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
             </div>
             <div class="carousel-inner">
-                <div class="carousel-item active"><img src="img/pwa-01.png" alt="Banner 1"></div>
-                <div class="carousel-item"><img src="img/pwa2-01.png" alt="Banner 2"></div>
-                <div class="carousel-item"><img src="Img/banner1.png" alt="Banner 3"></div>
+                <div class="carousel-item active"><img src="img/pwa-01.png" alt="Banner 1" onerror="this.src='https://via.placeholder.com/1200x400?text=Banner+FitSyle+1'"></div>
+                <div class="carousel-item"><img src="img/pwa2-01.png" alt="Banner 2" onerror="this.src='https://via.placeholder.com/1200x400?text=Banner+FitSyle+2'"></div>
+                <div class="carousel-item"><img src="Img/banner1.png" alt="Banner 3" onerror="this.src='https://via.placeholder.com/1200x400?text=Banner+FitSyle+3'"></div>
             </div>
 
             <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
@@ -231,11 +228,12 @@
         </div>
     </div>
 
+    <!-- === INICIO MODAL LOGIN (Ya integrado) === -->
     <div class="modal fade modal-login-custom" id="loginModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Bienvenido a FitSyle</h5>
+                    <h5 class="modal-title" id="modalAuthTitle">Inicia Sesión</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -264,10 +262,210 @@
             </div>
         </div>
     </div>
+    <!-- === FIN MODAL LOGIN === -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 
     <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, query, orderBy, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // CONFIGURACIÓN DE AUTENTICACIÓN (Tus nuevas llaves 'fitsyle')
+        const authConfig = {
+            apiKey: "AIzaSyAuyh4pHllhtZLbgFgfZF4tlJrncFy4R7g",
+            authDomain: "fitsyle.firebaseapp.com",
+            projectId: "fitsyle",
+            storageBucket: "fitsyle.firebasestorage.app",
+            messagingSenderId: "595367121052",
+            appId: "1:595367121052:web:c19aac0ed1986dfb389d59",
+            measurementId: "G-J46KZD01W3"
+        };
+
+        // CONFIGURACIÓN DE BASE DE DATOS (Tus llaves antiguas 'proyecto1' donde están los productos)
+        const dbConfig = {
+            apiKey: "AIzaSyB_LcA4zZk6gZcAPH38HDMxXVqlelgGLQ8",
+            authDomain: "proyecto1-b6570.firebaseapp.com",
+            projectId: "proyecto1-b6570",
+            storageBucket: "proyecto1-b6570.firebasestorage.app",
+            messagingSenderId: "575435247117",
+            appId: "1:575435247117:web:88bfac2a385f43158a4f44",
+            measurementId: "G-R4L645TLDL"
+        };
+
+        // Inicialización Híbrida
+        const appAuth = initializeApp(authConfig, "AppLogin");
+        const appDB = initializeApp(dbConfig, "AppProductos");
+
+        const auth = getAuth(appAuth);
+        const db = getFirestore(appDB);
+        const googleProvider = new GoogleAuthProvider();
+
+        // Habilitar persistencia offline si es posible
+        enableIndexedDbPersistence(db).catch((err) => console.log('Persistencia:', err.code));
+
+        // UI Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const userDropdown = document.getElementById('userDropdown');
+        const navUserName = document.getElementById('navUserName');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const alertContainer = document.getElementById('alert-container');
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const floatingMenu = document.getElementById('floatingMenu');
+        
+        // Elementos del Modal Auth
+        const authForm = document.getElementById('authForm');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        const toggleAuthModeBtn = document.getElementById('toggleAuthMode');
+        const nameGroup = document.getElementById('nameGroup');
+        const submitBtn = document.getElementById('submitBtn');
+        const modalTitle = document.getElementById('modalAuthTitle');
+        let isRegisterMode = false;
+
+        // --- FUNCIONES DE ALERTA ---
+        window.showAlert = (message, type = 'success') => {
+            const div = document.createElement('div');
+            div.className = `alert alert-${type} alert-dismissible fade show shadow`;
+            div.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.appendChild(div);
+            setTimeout(() => div.remove(), 6000);
+        };
+
+        // --- AUTH: TOGGLE LOGIN / REGISTER ---
+        if (toggleAuthModeBtn) {
+            toggleAuthModeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                isRegisterMode = !isRegisterMode;
+                if (isRegisterMode) {
+                    nameGroup.classList.remove('d-none');
+                    modalTitle.textContent = "Crear Cuenta";
+                    submitBtn.textContent = "REGISTRARSE";
+                    toggleAuthModeBtn.textContent = "¿Ya tienes cuenta? Inicia Sesión";
+                } else {
+                    nameGroup.classList.add('d-none');
+                    modalTitle.textContent = "Inicia Sesión";
+                    submitBtn.textContent = "INICIAR SESIÓN";
+                    toggleAuthModeBtn.textContent = "¿No tienes cuenta? Regístrate";
+                }
+            });
+        }
+
+        // --- AUTH: GOOGLE LOGIN (FIXED ERROR HANDLING) ---
+        if (googleLoginBtn) {
+            googleLoginBtn.addEventListener('click', async () => {
+                // Prevent multiple clicks
+                if (googleLoginBtn.disabled) return;
+                googleLoginBtn.disabled = true;
+                googleLoginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Conectando...';
+
+                try {
+                    await signInWithPopup(auth, googleProvider);
+                    const modalEl = document.getElementById('loginModal');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if(modal) modal.hide();
+                    window.showAlert("¡Bienvenido con Google!", "success");
+                } catch (error) {
+                    console.error("Google Auth Error:", error);
+                    let msg = "Error al iniciar sesión con Google.";
+                    
+                    if (error.code === 'auth/unauthorized-domain') {
+                        msg = "⚠️ <b>Error de Dominio:</b> Este sitio no está autorizado. Agrega este dominio a 'Authorized Domains' en tu consola de Firebase.";
+                    } else if (error.code === 'auth/popup-closed-by-user') {
+                        msg = "Cancelaste el inicio de sesión.";
+                    } else if (error.code === 'auth/cancelled-popup-request') {
+                        msg = "Solicitud cancelada. Intenta de nuevo.";
+                    }
+
+                    window.showAlert(msg, "danger");
+                } finally {
+                    googleLoginBtn.disabled = false;
+                    googleLoginBtn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" width="20"> Continuar con Google';
+                }
+            });
+        }
+
+        // --- AUTH: EMAIL / PASSWORD ---
+        if (authForm) {
+            authForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                const name = document.getElementById('registerName').value;
+
+                try {
+                    if (isRegisterMode) {
+                        // REGISTRO
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        if (name) {
+                            await updateProfile(userCredential.user, { displayName: name });
+                        }
+                        window.showAlert("Cuenta creada exitosamente", "success");
+                    } else {
+                        // LOGIN
+                        await signInWithEmailAndPassword(auth, email, password);
+                        window.showAlert("Bienvenido de nuevo", "success");
+                    }
+                    
+                    // Cerrar modal
+                    const modalEl = document.getElementById('loginModal');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if(modal) modal.hide();
+                    authForm.reset();
+
+                } catch (error) {
+                    console.error(error);
+                    let msg = "Error de autenticación";
+                    if(error.code === 'auth/wrong-password') msg = "Contraseña incorrecta";
+                    if(error.code === 'auth/user-not-found') msg = "Usuario no encontrado";
+                    if(error.code === 'auth/email-already-in-use') msg = "El correo ya está registrado";
+                    if(error.code === 'auth/weak-password') msg = "La contraseña debe tener al menos 6 caracteres";
+                    window.showAlert(msg, "danger");
+                }
+            });
+        }
+
+        // Toggle Menu Flotante
+        if (menuToggleBtn) {
+            menuToggleBtn.onclick = (e) => {
+                e.stopPropagation();
+                floatingMenu.classList.toggle('d-none');
+            };
+        }
+
+        // Cerrar menú al hacer click fuera
+        document.addEventListener('click', (e) => {
+            if (floatingMenu && !floatingMenu.contains(e.target) && menuToggleBtn && !menuToggleBtn.contains(e.target)) {
+                floatingMenu.classList.add('d-none');
+            }
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                loginBtn.classList.add('d-none');
+                userDropdown.classList.remove('d-none');
+                const name = user.displayName ? user.displayName.split(' ')[0] : 'Usuario';
+                navUserName.textContent = name;
+            } else {
+                loginBtn.classList.remove('d-none');
+                userDropdown.classList.add('d-none');
+                navUserName.textContent = "";
+            }
+        });
+
+        logoutBtn.onclick = (e) => {
+            e.preventDefault();
+            signOut(auth).then(() => {
+                window.showAlert("Sesión cerrada", "success");
+                setTimeout(() => window.location.reload(), 1000);
+            });
+        };
+
+        window.addEventListener('offline', () => document.getElementById('offline-indicator').classList.remove('d-none'));
+        window.addEventListener('online', () => document.getElementById('offline-indicator').classList.add('d-none'));
+
         let allProducts = [];
         let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
         renderCart();
@@ -484,17 +682,17 @@
             const prod = allProducts.find(p => p.id === id);
             const qtyInput = document.getElementById(`qty-${id}`);
             const qty = parseInt(qtyInput.value) || 1;
-            if (qty > prod.stock) { showAlert(`Solo quedan ${prod.stock}`, "error"); return; }
+            if (qty > prod.stock) { window.showAlert(`Solo quedan ${prod.stock}`, "danger"); return; }
             const exist = carrito.find(i => i.id === id);
             if (exist) {
-                if (exist.cantidad + qty > prod.stock) { showAlert("Stock insuficiente", "error"); return; }
+                if (exist.cantidad + qty > prod.stock) { window.showAlert("Stock insuficiente", "danger"); return; }
                 exist.cantidad += qty;
             } else {
                 carrito.push({ ...prod, cantidad: qty });
             }
             saveCart();
             qtyInput.value = 1;
-            showAlert("Producto agregado", "success");
+            window.showAlert("Producto agregado", "success");
         };
 
         window.removeFromCart = (idx) => {
@@ -558,10 +756,41 @@
 
         document.getElementById('limpiar-carrito').onclick = () => { if (confirm("¿Vaciar carrito?")) { carrito = []; saveCart(); } };
 
-        // --- PAYPAL INITIALIZATION ---
-        try {
-            if (typeof paypal !== 'undefined') {
-                paypal.Buttons({
+        // --- PAYPAL DYNAMIC INITIALIZATION (DEFENSIVE LOADING) ---
+        const loadPayPal = () => {
+            const script = document.createElement('script');
+            // Usando tu Client ID original
+            script.src = "https://www.paypal.com/sdk/js?client-id=ARhOIBjuNzQQeGRv84_3n7kiuTWPY90fGLRUGAHlcTAmEJsoXnTiHgIgaM1-ZFIRhpni_SMlTIG0hyuo&currency=MXN";
+            script.async = true;
+            script.onload = () => {
+                // Delay init slightly to ensure DOM is ready
+                setTimeout(initPayPalButtons, 500);
+            };
+            script.onerror = () => {
+                console.warn("PayPal SDK fail to load");
+                fallbackPayPalUI();
+            };
+            document.head.appendChild(script);
+        };
+
+        function fallbackPayPalUI() {
+            const container = document.getElementById('paypal-button-container');
+            if (container) {
+                container.innerHTML = '<div class="alert alert-light small text-center text-muted">Pago online no disponible en vista previa.</div>';
+            }
+        }
+
+        function initPayPalButtons() {
+            if (typeof paypal === 'undefined') {
+                fallbackPayPalUI();
+                return;
+            }
+            
+            try {
+                // Check if container exists
+                if (!document.getElementById('paypal-button-container')) return;
+
+                const buttons = paypal.Buttons({
                     style: {
                         layout: 'vertical',
                         color: 'gold',
@@ -579,28 +808,42 @@
                     },
                     onApprove: function (data, actions) {
                         return actions.order.capture().then(function (details) {
-                            showAlert('Pago completado por ' + details.payer.name.given_name, 'success');
+                            window.showAlert('Pago completado por ' + details.payer.name.given_name, 'success');
                             carrito = [];
                             saveCart();
                             bootstrap.Offcanvas.getInstance(document.getElementById('cartOffcanvas')).hide();
                         });
                     },
                     onError: function (err) {
-                        console.error(err);
-                        showAlert("Error en el pago", "error");
+                        console.error("PayPal Button Error:", err);
+                        // Suppress alert for window host error which is common in sandboxes
+                        if (!JSON.stringify(err).includes('window host')) {
+                            window.showAlert("Error en el pago", "danger");
+                        }
                     }
-                }).render('#paypal-button-container');
-            } else {
-                document.getElementById('paypal-button-container').innerHTML =
-                    '<div class="alert alert-warning small">Error: PayPal no cargó. Verifica el Client ID.</div>';
+                });
+
+                // Wrap render in try-catch to suppress sandbox errors
+                try {
+                    buttons.render('#paypal-button-container').catch(err => {
+                        console.warn("PayPal render warning:", err);
+                        fallbackPayPalUI();
+                    });
+                } catch (renderErr) {
+                    console.warn("PayPal render error:", renderErr);
+                    fallbackPayPalUI();
+                }
+
+            } catch (e) {
+                console.error("PayPal Initialization Error:", e);
+                fallbackPayPalUI();
             }
-        } catch (e) {
-            console.error("PayPal Error:", e);
-            document.getElementById('paypal-button-container').innerHTML =
-                '<div class="alert alert-danger small">Error al cargar PayPal.</div>';
         }
 
-        // --- BOT RESTAURADO ---
+        // Iniciar carga de PayPal
+        loadPayPal();
+
+        // --- BOT DE IA ---
         document.addEventListener('DOMContentLoaded', function () {
             const sendBtn = document.getElementById('chat-send');
             const chatInput = document.getElementById('chat-input');
@@ -624,8 +867,7 @@
 
             async function callGeminiAPI(userQuery) {
                 const productsFromPage = getProductListFromDOM();
-                const productListJSON = JSON.stringify(productsFromPage);
-                const systemPrompt = `Eres un asistente de ventas. Responde corto y con emojis.`;
+                const systemPrompt = `Eres un asistente de ventas de FitSyle. Responde corto y con emojis. Productos visibles: ${JSON.stringify(productsFromPage)}`;
                 const apiKey = "AIzaSyBK5X1dROuIiq0NPhtXL7Yc6A7IVhMdO84";
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
                 const payload = { contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] } };

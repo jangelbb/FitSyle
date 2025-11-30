@@ -15,14 +15,7 @@ body {
     color: var(--color-texto-oscuro);
 }
 
-h1,
-h3,
-h4,
-h5,
-h6,
-.navbar-brand,
-.display-6,
-.footer-main {
+h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
     font-weight: 600;
 }
 
@@ -66,8 +59,6 @@ h6,
 }
 
 /* === MODIFICACIONES UI USUARIO === */
-
-/* Texto al lado del icono */
 .nav-text-label {
     font-size: 0.9rem;
     font-weight: 500;
@@ -75,7 +66,6 @@ h6,
     vertical-align: middle;
 }
 
-/* Carrito solo texto en móvil */
 .cart-text-mobile {
     display: inline-block;
     font-size: 0.9rem;
@@ -89,7 +79,6 @@ h6,
     }
 }
 
-/* Dropdown menú usuario */
 .dropdown-menu-user {
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -443,7 +432,6 @@ h6,
     display: inline-block;
 }
 
-/* DESCRIPCIÓN CON EFECTO EXPANDIBLE */
 .card-text {
     color: #666;
     font-size: 0.9rem;
@@ -600,7 +588,7 @@ h6,
     font-size: 1.3rem;
     font-weight: 600;
     color: #333;
-}
+            }
 
 .cart-total-amount {
     font-size: 1.5rem;
@@ -631,7 +619,6 @@ h6,
     box-shadow: 0 4px 8px rgba(1, 68, 33, 0.3);
 }
 
-/* ESTILO CARRITO VACÍO (Como tu imagen) */
 .empty-cart-message {
     text-align: center;
     padding: 40px 20px;
@@ -644,7 +631,6 @@ h6,
     margin-bottom: 15px;
 }
 
-/* Icono grande y gris claro */
 .empty-cart-title {
     font-weight: 700;
     color: #555;
@@ -750,6 +736,11 @@ h6,
     background-color: #f8f9fa;
     border-color: #ccc;
     color: #333 !important;
+}
+
+.btn-google:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 /* === FOOTER === */
