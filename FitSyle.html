@@ -41,13 +41,14 @@
             <div class="search-container mx-2">
                 <div class="search-input-wrapper">
                     <i class="bi bi-search search-icon"></i>
-                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar productos">
+                    <!-- CAMBIO: Placeholder ahora dice solo "Buscar" -->
+                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar">
                     <i class="bi bi-x search-clear-icon d-none" id="clearSearchBtn"></i>
                 </div>
             </div>
 
             <!-- ICONOS (Login/Carrito) SIEMPRE VISIBLES -->
-            <div class="d-flex align-items-center gap-2 order-lg-last ms-2">
+            <div class="d-flex align-items-center gap-2 order-lg-last ms-2 mobile-icons-group">
 
                 <!-- CARRITO -->
                 <a class="btn btn-icon fs-4 text-white position-relative d-flex align-items-center" href="#"
@@ -67,12 +68,12 @@
 
                     <!-- DROPDOWN USUARIO (VISIBLE CON SESIÓN) -->
                     <div class="dropdown d-none" id="userDropdown">
-                        <!-- Botón Toggle: Ahora incluye el nombre y NO tiene flecha (ver CSS) -->
+                        <!-- CAMBIO: Nombre al natural (sin forzar mayúsculas) -->
                         <a class="btn btn-icon text-white d-flex align-items-center dropdown-toggle" href="#"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false"
                             style="text-decoration: none;">
                             <i class="bi bi-person-circle fs-4"></i>
-                            <span id="navUserName" class="ms-2 fs-6 fw-bold text-uppercase d-inline-block" style="vertical-align: middle;">Usuario</span>
+                            <span id="navUserName" class="ms-2 fs-6 fw-bold d-inline-block" style="vertical-align: middle;">Usuario</span>
                         </a>
                         <!-- Menú Desplegable: SOLO tiene el botón de cerrar sesión -->
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-user">
@@ -445,13 +446,12 @@
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // Usuario logueado
                 loginBtn.classList.add('d-none');
                 userDropdown.classList.remove('d-none');
-                const name = user.displayName ? user.displayName.split(' ')[0] : 'Usuario';
+                // CAMBIO: Mostrar nombre tal cual, sin recortar
+                const name = user.displayName || 'Usuario';
                 navUserName.textContent = name;
             } else {
-                // Usuario no logueado
                 loginBtn.classList.remove('d-none');
                 userDropdown.classList.add('d-none');
                 navUserName.textContent = "";
@@ -760,6 +760,7 @@
         document.getElementById('limpiar-carrito').onclick = () => { if (confirm("¿Vaciar carrito?")) { carrito = []; saveCart(); } };
 
         // --- PAYPAL DYNAMIC INITIALIZATION (DEFENSIVE LOADING) ---
+        // Se carga dinámicamente para manejar errores de entorno (sandbox/iframe) y evitar "window host error"
         const loadPayPal = () => {
             const script = document.createElement('script');
             // Usando tu Client ID original
@@ -828,10 +829,13 @@
 
                 // Wrap render in try-catch to suppress sandbox errors
                 try {
-                    buttons.render('#paypal-button-container').catch(err => {
-                        console.warn("PayPal render warning:", err);
-                        fallbackPayPalUI();
-                    });
+                    // Check if buttons are already rendered to avoid duplicates
+                    if(document.getElementById('paypal-button-container').innerHTML.trim() === "") {
+                         buttons.render('#paypal-button-container').catch(err => {
+                            console.warn("PayPal render warning:", err);
+                            fallbackPayPalUI();
+                        });
+                    }
                 } catch (renderErr) {
                     console.warn("PayPal render error:", renderErr);
                     fallbackPayPalUI();

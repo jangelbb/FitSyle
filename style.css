@@ -85,11 +85,23 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
     border: none;
     padding: 8px 0;
     margin-top: 10px;
+    min-width: 180px;
 }
 
 .dropdown-item {
     padding: 10px 20px;
     font-weight: 500;
+}
+
+/* Quitar la flecha del dropdown de usuario */
+#userDropdown .dropdown-toggle::after {
+    display: none !important;
+    content: none !important;
+}
+
+/* Ajuste del nombre de usuario */
+#navUserName {
+    text-transform: none !important; /* Respetar mayúsculas/minúsculas */
 }
 
 /* === BADGE CARRITO === */
@@ -588,7 +600,7 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
     font-size: 1.3rem;
     font-weight: 600;
     color: #333;
-            }
+}
 
 .cart-total-amount {
     font-size: 1.5rem;
@@ -827,7 +839,7 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
 @media (max-width: 576px) {
     .navbar-main .container-fluid {
         flex-wrap: nowrap;
-        gap: 10px;
+        gap: 5px; /* GAP REDUCIDO para juntar más los iconos en móvil */
     }
 
     .navbar-brand img {
@@ -907,6 +919,16 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
     .category-filter-bar {
         margin-top: 60px !important;
         margin-bottom: 15px;
+    }
+
+    /* AJUSTE PARA ICONOS MÁS JUNTOS EN MÓVIL */
+    .mobile-icons-group {
+        gap: 2px !important; /* Espacio mínimo entre iconos */
+    }
+    
+    .mobile-icons-group .btn-icon {
+        padding-left: 6px !important;
+        padding-right: 6px !important;
     }
 }
 
