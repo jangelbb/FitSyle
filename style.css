@@ -49,7 +49,6 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
 .navbar-toggler {
     border: none;
     color: white;
-    /* AUMENTO TAMAÑO DE ICONO HAMBURGUESA */
     font-size: 1.4rem; 
     padding: 0.25rem;
 }
@@ -817,7 +816,7 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
     border-bottom-left-radius: 0.2rem;
 }
 
-/* === MENSAJE FLOTANTE MODERNO (Stock) === */
+/* === MENSAJE FLOTANTE MODERNO (Toast) === */
 .custom-toast {
     background-color: rgba(255, 255, 255, 0.98);
     color: #333;
@@ -853,11 +852,18 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
     pointer-events: none;
 }
 
-/* Icono dentro del mensaje */
+/* Iconos y colores */
 .custom-toast i {
-    color: #dc3545; /* Rojo para error/stock */
     font-size: 1.1rem;
-    flex-shrink: 0; /* Evita que el icono se aplaste */
+    flex-shrink: 0;
+}
+
+.custom-toast.error i {
+    color: #dc3545; /* Rojo */
+}
+
+.custom-toast.success i {
+    color: #198754; /* Verde */
 }
 
 /* Responsive */
@@ -883,7 +889,7 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
 @media (max-width: 576px) {
     .navbar-main .container-fluid {
         flex-wrap: nowrap;
-        gap: 5px; /* GAP REDUCIDO para juntar más los iconos en móvil */
+        gap: 5px; 
     }
 
     .navbar-brand img {
@@ -912,11 +918,11 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
         font-size: 0.8rem;
     }
 
-    /* Ajustes específicos para el TOAST en móvil */
+    /* Ajustes TOAST móvil */
     .custom-toast {
-        font-size: 0.8rem; /* Letra más pequeña */
-        padding: 8px 16px; /* Padding más pequeño */
-        bottom: 20px !important; /* Un poco más abajo */
+        font-size: 0.8rem;
+        padding: 8px 16px; 
+        bottom: 20px !important;
     }
 
     /* AJUSTES MÓVIL */
@@ -967,9 +973,9 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
         margin-bottom: 15px;
     }
 
-    /* AJUSTE PARA ICONOS MÁS JUNTOS EN MÓVIL */
+    /* AJUSTE PARA ICONOS EN MÓVIL CON GAP */
     .mobile-icons-group {
-        gap: 0px !important; /* Aún más juntos */
+        gap: 8px !important; /* SEPARACIÓN AUMENTADA ENTRE CARRITO Y LOGIN */
     }
     
     .mobile-icons-group .btn-icon {
@@ -977,7 +983,6 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
         padding-right: 4px !important;
     }
 
-    /* Ajuste para pegar más el nombre al menú hamburguesa */
     #userDropdown .dropdown-toggle {
         padding-right: 2px !important;
         margin-right: 0 !important;

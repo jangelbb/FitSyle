@@ -18,7 +18,7 @@
 </head>
 
 <body>
-    <!-- Alertas normales (login, etc) Arriba -->
+    <!-- Alertas normales (Solo errores graves) -->
     <div id="alert-container" class="position-fixed top-0 start-50 translate-middle-x p-3"
         style="z-index: 2050; width: 90%; max-width: 400px;"></div>
 
@@ -28,7 +28,7 @@
         <i class="bi bi-wifi-off"></i> Modo Offline
     </div>
 
-    <!-- NUEVO: Contenedor para alerta moderna de stock (Abajo Centro) -->
+    <!-- Contenedor para TOAST moderno (Login, Stock, etc.) -->
     <div id="toast-container" class="position-fixed bottom-0 start-50 translate-middle-x" style="z-index: 3050; margin-bottom: 80px; width: auto; max-width: 95%;"></div>
 
     <!-- Navbar -->
@@ -45,13 +45,12 @@
             <div class="search-container mx-2">
                 <div class="search-input-wrapper">
                     <i class="bi bi-search search-icon"></i>
-                    <!-- Placeholder "Buscar" -->
                     <input type="text" id="searchInput" class="search-input" placeholder="Buscar">
                     <i class="bi bi-x search-clear-icon d-none" id="clearSearchBtn"></i>
                 </div>
             </div>
 
-            <!-- ICONOS (Login/Carrito) SIEMPRE VISIBLES -->
+            <!-- ICONOS (Login/Carrito) -->
             <div class="d-flex align-items-center gap-2 order-lg-last ms-2 mobile-icons-group">
 
                 <!-- CARRITO -->
@@ -64,15 +63,12 @@
 
                 <!-- USUARIO / LOGIN -->
                 <div class="d-flex align-items-center">
-                    <!-- BOTÓN LOGIN (VISIBLE CUANDO NO HAY SESIÓN) -->
                     <a class="btn btn-icon fs-4 text-white d-flex align-items-center" href="#" id="loginBtn"
                         data-bs-toggle="modal" data-bs-target="#loginModal">
                         <i class="bi bi-person-circle"></i>
                     </a>
 
-                    <!-- DROPDOWN USUARIO (VISIBLE CON SESIÓN) -->
                     <div class="dropdown d-none" id="userDropdown">
-                        <!-- Nombre pegado al menu hamburguesa en móvil -->
                         <a class="btn btn-icon text-white d-flex align-items-center dropdown-toggle pe-1" href="#"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false"
                             style="text-decoration: none;">
@@ -90,7 +86,7 @@
                     </div>
                 </div>
 
-                <!-- HAMBURGUESA (Un poco más grande en CSS) -->
+                <!-- HAMBURGUESA -->
                 <button class="navbar-toggler ms-1 d-block" type="button" id="menuToggleBtn">
                     <i class="bi bi-list text-white"></i>
                 </button>
@@ -233,7 +229,7 @@
         </div>
     </div>
 
-    <!-- === INICIO MODAL LOGIN (Ya integrado) === -->
+    <!-- === INICIO MODAL LOGIN === -->
     <div class="modal fade modal-login-custom" id="loginModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -276,7 +272,7 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, collection, onSnapshot, query, orderBy, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // CONFIGURACIÓN DE AUTENTICACIÓN (Tus nuevas llaves 'fitsyle')
+        // CONFIGURACIÓN DE AUTENTICACIÓN
         const authConfig = {
             apiKey: "AIzaSyAuyh4pHllhtZLbgFgfZF4tlJrncFy4R7g",
             authDomain: "fitsyle.firebaseapp.com",
@@ -287,7 +283,7 @@
             measurementId: "G-J46KZD01W3"
         };
 
-        // CONFIGURACIÓN DE BASE DE DATOS (Tus llaves antiguas 'proyecto1' donde están los productos)
+        // CONFIGURACIÓN DE BASE DE DATOS
         const dbConfig = {
             apiKey: "AIzaSyB_LcA4zZk6gZcAPH38HDMxXVqlelgGLQ8",
             authDomain: "proyecto1-b6570.firebaseapp.com",
@@ -315,7 +311,7 @@
         const navUserName = document.getElementById('navUserName');
         const logoutBtn = document.getElementById('logoutBtn');
         const alertContainer = document.getElementById('alert-container');
-        const toastContainer = document.getElementById('toast-container'); // Nuevo contenedor para toast
+        const toastContainer = document.getElementById('toast-container');
         const menuToggleBtn = document.getElementById('menuToggleBtn');
         const floatingMenu = document.getElementById('floatingMenu');
         
@@ -340,32 +336,35 @@
             setTimeout(() => div.remove(), 6000);
         };
 
-        // --- NUEVA FUNCIÓN TOAST (Stock insuficiente, abajo, moderno, SIN AMONTONARSE) ---
-        let toastTimeout; // Variable para controlar el tiempo del toast activo
+        // --- FUNCIÓN TOAST MEJORADA (SUCCESS/ERROR) ---
+        let toastTimeout; 
 
-        window.showToast = (message) => {
+        window.showToast = (message, type = 'error') => {
             const container = document.getElementById('toast-container');
             
-            // 1. Limpiar cualquier toast existente inmediatamente
+            // 1. Limpiar anterior
             container.innerHTML = ''; 
             if (toastTimeout) clearTimeout(toastTimeout);
 
-            // 2. Crear nuevo toast
+            // 2. Icono dinámico según tipo
+            let icon = 'bi-exclamation-circle-fill';
+            if (type === 'success') icon = 'bi-check-circle-fill';
+
+            // 3. Crear nuevo toast
             const div = document.createElement('div');
-            div.className = 'custom-toast show'; // Se muestra directamente
-            div.innerHTML = `<i class="bi bi-exclamation-circle-fill"></i> <span>${message}</span>`;
+            div.className = `custom-toast show ${type}`; // Agrego clase 'success' o 'error'
+            div.innerHTML = `<i class="bi ${icon}"></i> <span>${message}</span>`;
             
             container.appendChild(div);
 
-            // 3. Programar eliminación
+            // 4. Programar eliminación
             toastTimeout = setTimeout(() => {
                 div.classList.remove('show');
                 div.classList.add('hide');
                 setTimeout(() => {
-                    // Verificación extra para no borrar uno nuevo que haya entrado
                     if (container.contains(div)) div.remove();
                 }, 300);
-            }, 2500); // Duración un poco más corta para que se sienta ágil
+            }, 3000);
         };
 
         // --- AUTH: TOGGLE LOGIN / REGISTER ---
@@ -387,10 +386,9 @@
             });
         }
 
-        // --- AUTH: GOOGLE LOGIN (FIXED ERROR HANDLING) ---
+        // --- AUTH: GOOGLE LOGIN ---
         if (googleLoginBtn) {
             googleLoginBtn.addEventListener('click', async () => {
-                // Prevent multiple clicks
                 if (googleLoginBtn.disabled) return;
                 googleLoginBtn.disabled = true;
                 googleLoginBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Conectando...';
@@ -400,16 +398,16 @@
                     const modalEl = document.getElementById('loginModal');
                     const modal = bootstrap.Modal.getInstance(modalEl);
                     if(modal) modal.hide();
-                    window.showAlert("¡Bienvenido con Google!", "success");
+                    
+                    // USAR TOAST DE ÉXITO
+                    window.showToast("¡Bienvenido con Google!", "success");
                 } catch (error) {
                     console.error("Google Auth Error:", error);
-                    let msg = "Error al iniciar sesión con Google.";
+                    let msg = "Error al iniciar sesión.";
                     if (error.code === 'auth/unauthorized-domain') {
-                        msg = "⚠️ <b>Error de Dominio:</b> Este sitio no está autorizado. Agrega este dominio a 'Authorized Domains' en tu consola de Firebase.";
-                    } else if (error.code === 'auth/popup-closed-by-user') {
-                        msg = "Cancelaste el inicio de sesión.";
+                        msg = "Error de dominio no autorizado.";
                     }
-                    window.showAlert(msg, "danger");
+                    window.showAlert(msg, "danger"); // Errores graves se quedan arriba
                 } finally {
                     googleLoginBtn.disabled = false;
                     googleLoginBtn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" width="20"> Continuar con Google';
@@ -431,10 +429,12 @@
                         if (name) {
                             await updateProfile(userCredential.user, { displayName: name });
                         }
-                        window.showAlert("Cuenta creada exitosamente", "success");
+                        // USAR TOAST DE ÉXITO
+                        window.showToast("Cuenta creada exitosamente", "success");
                     } else {
                         await signInWithEmailAndPassword(auth, email, password);
-                        window.showAlert("Bienvenido de nuevo", "success");
+                        // USAR TOAST DE ÉXITO
+                        window.showToast("Bienvenido de nuevo", "success");
                     }
                     
                     const modalEl = document.getElementById('loginModal');
@@ -446,9 +446,6 @@
                     console.error(error);
                     let msg = "Error de autenticación";
                     if(error.code === 'auth/wrong-password') msg = "Contraseña incorrecta";
-                    if(error.code === 'auth/user-not-found') msg = "Usuario no encontrado";
-                    if(error.code === 'auth/email-already-in-use') msg = "El correo ya está registrado";
-                    if(error.code === 'auth/weak-password') msg = "La contraseña debe tener al menos 6 caracteres";
                     window.showAlert(msg, "danger");
                 }
             });
@@ -485,8 +482,9 @@
         logoutBtn.onclick = (e) => {
             e.preventDefault();
             signOut(auth).then(() => {
-                window.showAlert("Sesión cerrada", "success");
-                setTimeout(() => window.location.reload(), 1000);
+                // USAR TOAST DE ÉXITO AL SALIR
+                window.showToast("Sesión cerrada", "success");
+                setTimeout(() => window.location.reload(), 1500);
             });
         };
 
@@ -710,14 +708,13 @@
             const qtyInput = document.getElementById(`qty-${id}`);
             const qty = parseInt(qtyInput.value) || 1;
             if (qty > prod.stock) { 
-                // AQUI CAMBIE LA ALERTA A LA NUEVA TOAST (Abajo)
-                window.showToast(`Stock insuficiente. Solo quedan ${prod.stock}`); 
+                window.showToast(`Stock insuficiente. Solo quedan ${prod.stock}`, 'error'); 
                 return; 
             }
             const exist = carrito.find(i => i.id === id);
             if (exist) {
                 if (exist.cantidad + qty > prod.stock) { 
-                    window.showToast("Stock insuficiente"); 
+                    window.showToast("Stock insuficiente", 'error'); 
                     return; 
                 }
                 exist.cantidad += qty;
@@ -726,7 +723,6 @@
             }
             saveCart();
             qtyInput.value = 1;
-            // AQUI QUITE LA ALERTA DE PRODUCTO AGREGADO (No hace nada visualmente, solo agrega)
         };
 
         window.removeFromCart = (idx) => {
