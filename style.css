@@ -85,11 +85,18 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
     border: none;
     padding: 8px 0;
     margin-top: 10px;
+    min-width: 180px; /* Ajuste para que se vea bien solo el botón */
 }
 
 .dropdown-item {
     padding: 10px 20px;
     font-weight: 500;
+}
+
+/* Quitar la flecha del dropdown de usuario */
+#userDropdown .dropdown-toggle::after {
+    display: none !important;
+    content: none !important;
 }
 
 /* === BADGE CARRITO === */
@@ -588,7 +595,7 @@ h1, h3, h4, h5, h6, .navbar-brand, .display-6, .footer-main {
     font-size: 1.3rem;
     font-weight: 600;
     color: #333;
-            }
+}
 
 .cart-total-amount {
     font-size: 1.5rem;
