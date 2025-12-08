@@ -108,9 +108,9 @@
                 <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
             </div>
             <div class="carousel-inner">
-                <div class="carousel-item active"><img src="banner1.png" alt="Banner 1"></div>
-                <div class="carousel-item"><img src="banner2.png" alt="Banner 2"></div>
-                <div class="carousel-item"><img src="banner3.png" alt="Banner 3"></div>
+                <div class="carousel-item active"><img src="img/pwa-01.png" alt="Banner 1"></div>
+                <div class="carousel-item"><img src="img/pwa2-01.png" alt="Banner 2"></div>
+                <div class="carousel-item"><img src="Img/banner1.png" alt="Banner 3"></div>
             </div>
 
             <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
@@ -639,7 +639,8 @@
                     imgHTML = `<div id="car-${p.id}" class="carousel slide h-100" data-bs-ride="false"><div class="carousel-inner h-100">${slides}</div></div>`;
                 }
 
-                let talla = p.tallaRopa ? p.tallaRopa : (p.tallaCalzado ? p.tallaCalzado + ' MX' : '');
+                // AQUÍ SE QUITA "MX" DE LA VISTA
+                let talla = p.tallaRopa ? p.tallaRopa : (p.tallaCalzado ? p.tallaCalzado : '');
                 let tallaBadge = talla ? `<span class="badge-talla-client">${talla}</span>` : '';
                 let segundaBadge = p.esSegundaOportunidad ? `<div class="badge-segunda-container"><span class="badge-segunda-oportunidad">2da Oportunidad</span></div>` : '';
                 const btnState = p.stock <= 0 ? 'disabled' : '';
@@ -852,9 +853,4 @@
     </script>
 </body>
 
-
 </html>
-
-
-
-

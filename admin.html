@@ -309,7 +309,7 @@
       
       <!-- LOGO + TEXTO (Adaptable) -->
       <a class="navbar-brand" href="index.html">
-        <img src="logo.png" alt="Logo" class="navbar-logo" onerror="this.src='https://placehold.co/30x30'">
+        <img src="Img/logo.png" alt="Logo" class="navbar-logo" onerror="this.src='https://placehold.co/30x30'">
         <!-- En móvil dice "Admin", en PC dice "FitSyle Admin" -->
         <span class="d-none d-sm-inline">FitSyle Admin</span>
         <span class="d-sm-none">Admin</span>
@@ -443,13 +443,14 @@
                     <option value="XL">XL</option>
                   </select>
                 </div>
+                <!-- AQUÍ SE QUITA "MX" DE LAS OPCIONES DE CALZADO -->
                 <div id="divTallaCalzado" class="d-none">
                    <select id="tallaCalzado" class="form-select">
                     <option value="" selected disabled>Elige número...</option>
-                    <option value="23">23 MX</option><option value="24">24 MX</option>
-                    <option value="25">25 MX</option><option value="26">26 MX</option>
-                    <option value="27">27 MX</option><option value="28">28 MX</option>
-                    <option value="29">29 MX</option>
+                    <option value="23">23</option><option value="24">24</option>
+                    <option value="25">25</option><option value="26">26</option>
+                    <option value="27">27</option><option value="28">28</option>
+                    <option value="29">29</option>
                   </select>
                 </div>
                 <div id="mensajeSinTipo" class="text-muted small mt-2">Selecciona categoría primero.</div>
@@ -608,7 +609,7 @@
         }
 
         productos.forEach(p => {
-            let talla = p.tallaRopa || (p.tallaCalzado ? p.tallaCalzado + ' MX' : null);
+            let talla = p.tallaRopa || (p.tallaCalzado ? p.tallaCalzado : null);
             let tallaBadge = talla ? `<span class="badge-size">${talla}</span>` : '';
             
             let imgContent;
